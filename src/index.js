@@ -14,34 +14,29 @@ searchForm.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 function onSearch(e) {
   e.preventDefault();
   const searchQuery = e.target.value.trim();
-  if (e === '') {
-    return (countryList.innerHTML = ''), (countryInfo.innerHTML = '');
+  if (!searchQuery) {
+    clearAll();
+    return;
   }
 
   API.fetchCountries(searchQuery)
     .then(country => {
-      countryList.innerHTML = '';
-      countryInfo.innerHTML = '';
+      clearAll();
 
-      if (country.length === 1) {
+      if (country.length > 10) {
+        Notiflix.Notify.info(
+          'Too many matches found. Please enter a more specific name.'
+        );
+      } else if (country.length === 1) {
         renderCountryInfo(country);
-      } else if (country.length >= 10) {
-        onFetchError();
       } else {
         renderCountryList(country);
       }
     })
-    .catch(ifWrongNameAlert);
-}
-
-function onFetchError() {
-  Notiflix.Notify.info(
-    'Too many matches found. Please enter a more specific name.'
-  );
-}
-
-function ifWrongNameAlert() {
-  Notiflix.Notify.failure('Oops, there is no country with that name');
+    .catch(error => {
+      clearAll();
+      Notiflix.Notify.failure('Oops, there is no country with that name');
+    });
 }
 
 function renderCountryList(сountriesName) {
@@ -77,4 +72,9 @@ function renderCountryInfo(сountriesName) {
     })
     .join('');
   countryInfo.innerHTML = markup;
+}
+
+function clearAll() {
+  countryList.innerHTML = '';
+  countryInfo.innerHTML = '';
 }
