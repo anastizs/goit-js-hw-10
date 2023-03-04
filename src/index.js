@@ -24,11 +24,11 @@ function onSearch(e) {
       countryInfo.innerHTML = '';
 
       if (country.length === 1) {
-        countryInfo.insertAdjacentHTML('beforeend', renderCountryInfo(country));
+        renderCountryInfo(country);
       } else if (country.length >= 10) {
         onFetchError();
       } else {
-        countryList.insertAdjacentHTML('beforeend', renderCountryList(country));
+        renderCountryList(country);
       }
     })
     .catch(ifWrongNameAlert);
